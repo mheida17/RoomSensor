@@ -16,7 +16,7 @@
 /***** LOCAL VALUES *****/
 DHT dht(DHT_INPUT, DHTTYPE);
 static WiFiClient espClient;
-static PubSubClient client(_mqtt_server, 1883, espClient);
+static PubSubClient client(device_config._mqtt_server, 1883, espClient);
 static int loop_count = 0;
 
 /***** LOCAL FUNCTIONS *****/
@@ -29,7 +29,7 @@ static void update_dht(void);
 void setup() {
   Serial.begin(115200);
   setup_wifi();
-  if (client.connect(_clientID)) {
+  if (client.connect(device_config._clientID)) {
     Serial.println("Connected to MQTT Broker!");
   } else {
     Serial.println("Connection to MQTT Broker failed...");
@@ -46,7 +46,7 @@ void loop() {
   }
 
   if (!client.connected()) {
-    if (client.connect(_clientID)) {
+    if (client.connect(device_config._clientID)) {
       Serial.println("Re-Connected to MQTT Broker!");
     } else {
       Serial.println("Still not connected to MQTT Broker...");
@@ -68,10 +68,10 @@ cleanup:
 static void update_prox(void) {
   if (digitalRead(PROX_INPUT)) {
     Serial.println("person");
-    client.publish(_mqtt_topic_prox, "person");
+    client.publish(device_config._mqtt_topic_prox, "person");
   } else {
     Serial.println("empty");
-    client.publish(_mqtt_topic_prox, "empty");
+    client.publish(device_config._mqtt_topic_prox, "empty");
   }
 }
 
@@ -80,19 +80,19 @@ static void update_dht(void) {
   float temp = dht.readTemperature(true);
   if (isnan(hum)) {
     Serial.println("Error reading hum");
-    client.publish(_mqtt_topic_hum, "1000");
+    client.publish(device_config._mqtt_topic_hum, "1000");
   }
   if (isnan(temp)) {
     Serial.println("Error reading temp");
-    client.publish(_mqtt_topic_temp, "1000");
+    client.publish(device_config._mqtt_topic_temp, "1000");
   }
   if (isnan(hum) || isnan(temp)) {
     Serial.println("Error reading DHT22");
   } else {
     Serial.println("Temp = " + String(temp));
     Serial.println("Hum = " + String(hum));
-    client.publish(_mqtt_topic_temp, String(temp).c_str());
-    client.publish(_mqtt_topic_hum, String(hum).c_str());
+    client.publish(device_config._mqtt_topic_temp, String(temp).c_str());
+    client.publish(device_config._mqtt_topic_hum, String(hum).c_str());
   }
 }
 
@@ -101,15 +101,15 @@ static void setup_wifi(void) {
   // We start by connecting to a WiFi network
   Serial.println();
   Serial.print("Connecting to ");
-  Serial.println(_ssid);
+  Serial.println(device_config._ssid);
 
-  WiFi.begin(_ssid, _password);
+  WiFi.begin(device_config._ssid, device_config._password);
   bool ledState = true;
   while (WiFi.status() != WL_CONNECTED) {
     delay(500);
     Serial.print(".");
     digitalWrite(ONBOARD_LED, ledState);  // Also onboard LED
-    ledState = !ledState;                 // Flip ledState
+    ledState = !ledState;  // Flip ledState
   }
   digitalWrite(ONBOARD_LED, HIGH);  // WiFi connected
 
@@ -126,7 +126,8 @@ static void setup_board(void) {
 }
 
 void setup_ota() {
-  ArduinoOTA.setPassword("admin");
+  ArduinoOTA.setHostname(device_config._hostName);
+  ArduinoOTA.setPassword(device_config._otaPass);
   ArduinoOTA
       .onStart([]() {
         String type;
