@@ -2,3 +2,7 @@
 .vscode
 include/Config.h
 .DS_Store
+GTAGS
+GRTAGS
+GPATH
+platformio.ini
