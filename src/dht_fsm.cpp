@@ -94,29 +94,29 @@ static fsm_err_t unknown_entry_fn() {
   return FSM_ERR_OK;
 }
 
-static fsm_err_t periodic_active_event_fn() {
-  float hum = dht.readHumidity();
-  float temp = dht.readTemperature(true);
-  if (isnan(hum)) {
-    Serial.println("Error reading hum");
-    current_humidity = 1000;
+  static fsm_err_t periodic_active_event_fn() {
+    float hum = dht.readHumidity();
+    float temp = dht.readTemperature(true);
+    if (isnan(hum)) {
+      Serial.println("Error reading hum");
+      current_humidity = 1000;
+    }
+    if (isnan(temp)) {
+      Serial.println("Error reading temp");
+      current_temp = 1000;
+    }
+    if (isnan(hum) || isnan(temp)) {
+      Serial.println("Error reading DHT22");
+    } else {
+      current_temp = temp - TEMPERATURE_OFFSET;
+      current_humidity = hum;
+    }
+    return FSM_ERR_OK;
   }
-  if (isnan(temp)) {
-    Serial.println("Error reading temp");
-    current_temp = 1000;
-  }
-  if (isnan(hum) || isnan(temp)) {
-    Serial.println("Error reading DHT22");
-  } else {
-    current_temp = temp - TEMPERATURE_OFFSET;
-    current_humidity = hum;
-  }
-  return FSM_ERR_OK;
-}
 
-/******** NO OP FUNCTIONS ********/
-static fsm_err_t unknown_exit_fn() { return FSM_ERR_OK; }
-static fsm_err_t active_entry_fn() { return FSM_ERR_OK; }
-static fsm_err_t active_exit_fn() { return FSM_ERR_OK; }
-static fsm_err_t inactive_entry_fn() { return FSM_ERR_OK; }
-static fsm_err_t inactive_exit_fn() { return FSM_ERR_OK; }
+  /******** NO OP FUNCTIONS ********/
+  static fsm_err_t unknown_exit_fn() { return FSM_ERR_OK; }
+  static fsm_err_t active_entry_fn() { return FSM_ERR_OK; }
+  static fsm_err_t active_exit_fn() { return FSM_ERR_OK; }
+  static fsm_err_t inactive_entry_fn() { return FSM_ERR_OK; }
+  static fsm_err_t inactive_exit_fn() { return FSM_ERR_OK; }
