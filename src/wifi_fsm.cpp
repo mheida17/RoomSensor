@@ -2,7 +2,11 @@
 
 #include <Arduino.h>
 
+#ifdef CONT_INTEG
+#include "sampleConfig.h"
+#else
 #include "Config.h"
+#endif
 
 static uint8_t led_pin_s = 0;
 

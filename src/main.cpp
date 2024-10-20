@@ -1,5 +1,10 @@
 #include <Arduino.h>
+
+#ifdef CONT_INTEG
+#include "sampleConfig.h"
+#else
 #include <Config.h>
+#endif
 
 #include "dht_fsm.h"
 #include "mqtt_fsm.h"

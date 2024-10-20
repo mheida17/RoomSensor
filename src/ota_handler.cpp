@@ -2,7 +2,11 @@
 
 #include <ArduinoOTA.h>
 
+#ifdef CONT_INTEG
+#include "sampleConfig.h"
+#else
 #include "Config.h"
+#endif
 
 void ota_handler(void) { ArduinoOTA.handle(); }
 

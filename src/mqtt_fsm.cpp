@@ -4,7 +4,12 @@
 #include <CircularBuffer.h>
 #include <PubSubClient.h>
 
+#ifdef CONT_INTEG
+#include "sampleConfig.h"
+#else
 #include "Config.h"
+#endif
+
 #include "dht_fsm.h"
 #include "prox_fsm.h"
 #include "wifi_fsm.h"
